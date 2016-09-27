@@ -1,5 +1,11 @@
-angular.module('safeSnap', ['ionic', 'safeSnap.controllers', 'safeSnap.services'])
+// Ionic Starter App
 
+// angular.module is a global place for creating, registering and retrieving Angular modules
+// 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
+// the 2nd parameter is an array of 'requires'
+// 'starter.services' is found in services.js
+// 'starter.controllers' is found in controllers.js
+angular.module('safeSnap', ['ionic', 'ngCordova', 'ngResource', 'safeSnap.controllers', 'safeSnap.services'])
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -17,6 +23,7 @@ angular.module('safeSnap', ['ionic', 'safeSnap.controllers', 'safeSnap.services'
 })
 
 .config(function($stateProvider, $urlRouterProvider, $httpProvider) {
+
   $httpProvider.defaults.withCredentials = true;
 
   // Ionic uses AngularUI Router which uses the concept of states
@@ -36,6 +43,126 @@ angular.module('safeSnap', ['ionic', 'safeSnap.controllers', 'safeSnap.services'
     url: '/tab',
     abstract: true,
     templateUrl: 'templates/tabs.html'
+  })
+
+  // Each tab has its own nav history stack:
+
+  .state('tab.dash', {
+    url: '/dash',
+    views: {
+      'tab-dash': {
+        templateUrl: 'templates/tab-dash.html',
+        controller: 'DashCtrl'
+      }
+    }
+  })
+
+  .state('tab.patient-detail', {
+    url: '/patients/:patientId/set-index/:setId',
+    views: {
+      'tab-patients': {
+        templateUrl: 'templates/patient-image-set.html',
+        controller: 'PatientDetailCtrl'
+      }
+    }
+  })
+
+  .state('tab.set-list', {
+    cache: false,
+    url: '/patients/:patientId/set-index',
+    views: {
+      'tab-patients': {
+        templateUrl: 'templates/patient-set-list.html',
+        controller: 'SetListCtrl'
+      }
+    }
+  })
+
+  .state('tab.new-set', {
+    url: '/patients/:patientId/set/new',
+    views: {
+      'tab-patients': {
+        templateUrl: 'templates/add-set.html',
+        controller: 'NewSetCtrl'
+      }
+    }
+  })
+
+  .state('tab.new-patient', {
+    url: '/patients/new',
+    views: {
+      'tab-patients': {
+        templateUrl: 'templates/add-patient.html',
+        controller: 'NewPatientCtrl'
+      }
+    }
+  })
+
+  
+
+  .state('tab.account', {
+    url: '/account',
+    views: {
+      'tab-account': {
+        templateUrl: 'templates/tab-account.html',
+        controller: 'AccountCtrl'
+      }
+    }
+  })
+
+  .state('tab.choose-patient', {
+    url: '/camera/choose-patient',
+    views: {
+      'tab-camera': {
+        templateUrl: 'templates/choose-patient.html',
+        controller: 'ChoosePatientCtrl'
+      }
+    }
+  })
+
+  .state('tab.take-photo', {
+    url: '/camera/patient/:patientId/set/:setId',
+    views: {
+      'tab-camera': {
+        templateUrl: 'templates/take-photo.html',
+        controller: 'TakePhotoCtrl'
+      }
+    }
+  })
+
+  .state('tab.submit-new-image', {
+    cache: false,
+    url: '/camera/choose-patient/:patientId/:setId/:pictureUrl',
+    views: {
+      'tab-camera': {
+        templateUrl: 'templates/new-image-info.html',
+        controller: 'NewImageCtrl'
+      }
+    }
+  })
+
+  .state('tab.patients', {
+    cache: false,
+    url: '/patients',
+    views: {
+      'tab-patients': {
+        templateUrl: 'templates/tab-patients.html',
+        controller: 'PatientsCtrl'
+      }
+    }
+  })
+
+  // Register Account
+
+  .state('tab.register', {
+    cache: false,
+    url: '/sign-up',
+    views: {
+      'tab-register': {
+        templateUrl: 'templates/tab-sign-up.html',
+        controller: 'RegistrationCtrl'
+      }
+    }
   })
 
 
