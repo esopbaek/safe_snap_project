@@ -2,11 +2,11 @@ class Api::PatientsController < ApplicationController
   skip_before_filter :verify_authenticity_token
 
   def create
-    @patient = Patient.new(patient_params)
+    @patient = Patient.new(patient_params.merge({email: "test#{rand(1000)}@test.com}", password: "abcdefgh"}))
     if @patient.save
       render json: @patient
     else
-
+      render json: {"error": "missing params"}
     end    
   end
 
@@ -16,7 +16,7 @@ class Api::PatientsController < ApplicationController
   end
 
   def index
-    @patients = current_user.patients
+    @patients = Patient.all
     render json: @patients
   end
 

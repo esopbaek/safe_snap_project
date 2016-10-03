@@ -16,6 +16,13 @@ class Api::ImageSetsController < ApplicationController
     render json: @image_set
   end
 
+  def destroy
+    @patient = Patient.find(params[:patient_id])
+    @image_set = @patient.image_sets.find(params[:id])
+    if @image_set.destroy
+      render json: @image_set
+    end
+  end
   # def index
   #   @image_sets = ImageSet.all
   #   render json: @patients

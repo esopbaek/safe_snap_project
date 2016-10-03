@@ -61,7 +61,7 @@ angular.module('safeSnap.controllers', [])
     })
 
   var scope = $scope;
-  $scope.remove = function(patient) {
+  $scope.remove = function(index, patient) {
     var deleteUrl = api.url("api/physicians/1/patients/" + patient.id);
     $http({
     method: 'DELETE',
@@ -69,7 +69,8 @@ angular.module('safeSnap.controllers', [])
     url: deleteUrl,
       }).then(function successCallback(response) {
         // BUG make sure jsons match up perfectly for correct delete UI
-        $scope.patients.splice(response.data, 1);
+        // console.log($scope.patients, response.data);
+        $scope.patients.splice(index, 1);
         // $state.go('tab.patients', {}, { reload: true });
         // this callback will be called asynchronously
         // when the response is available
@@ -348,17 +349,18 @@ angular.module('safeSnap.controllers', [])
       // $scope.patient = Patients.get($stateParams.patientId);
       $scope.sets = $scope.patient.image_sets
 
-      $scope.remove = function(set) {
+      $scope.remove = function(set, index) {
+        console.log(set);
         var patientId = $stateParams.patientId;
         var setId = set.id;
         var deleteUrl = api.url("api/physicians/1/patients/" + patientId + "/image_sets/" + setId);
         $http({
         method: 'DELETE',
-        data: { id: patient.id },
+        data: { patient_id: patientId, id: set.id },
         url: deleteUrl,
           }).then(function successCallback(response) {
             // BUG make sure jsons match up perfectly for correct delete UI
-            $scope.sets.splice(response.data, 1);
+            $scope.sets.splice(index, 1);
             // $state.go('tab.patients', {}, { reload: true });
             // this callback will be called asynchronously
             // when the response is available
@@ -397,6 +399,7 @@ angular.module('safeSnap.controllers', [])
 
   var scope = $scope;
   $scope.submit = function() {
+    console.log($stateParams.patientId)
     var data = {
       name: this.name,
       description: this.description,
