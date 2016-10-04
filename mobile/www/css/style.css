@@ -1,4 +1,8 @@
-/* Empty. Add your own CSS if you like */
+ Empty. Add your own CSS if you like */
+
+input, textarea, select {
+   -webkit-appearance: none;
+}
 
 input[type="text"] {
 
@@ -29,27 +33,78 @@ input[type="text"] {
   width:100%;
 }
 
+/* CHOOSE SET Styles */
+
 .choose-set-to-add-image {
-  margin-top: 40px auto;
-  border: 1px solid lightgrey;
+  margin: 30px auto;
+  border: 3px solid grey;
   display: block;
   border-radius: 50%;
-  width:10px;
+  width: 66px;
   padding:20px;
 }
 
+.choose-set-to-add-image .icon {
+  color: grey;
+  font-size: 20px;
+  margin-left:35%;
+}
+
 .choose-set {
+  margin-top: 40%;
   display: block;
-  border: 1px solid black;
 }
 
 .choose-set #patient-name-input, .choose-set #set-name-input {
+  padding: 10px 10px 10px 15px;
+  background-color: #dddddd;
+  width: 60%;
+  color: grey;
   border: 1px solid lightgrey;
   display: block;
-  width: 30%;
   margin: 0 auto;
-  height:30px;
+  height: 40px;
 }
+
+.patient-search-container {
+  width: 50%;
+  height: 40px;
+  position: absolute;
+  top: -40%;
+  left: 25%;
+}
+
+.patient-search-container .patient-search-input {
+  padding: 0 15px;
+  width: 91%;
+  border: 1px solid lightgrey;
+  border-bottom: 3px solid grey;
+  -webkit-appearance: none;
+  -webkit-border-radius:0; 
+  border-radius:0;
+}
+
+
+.patient-search-container .patient-dropdown {
+
+}
+
+.patient-search-container .patient-dropdown .list {
+
+}
+
+.patient-search-container .patient-dropdown .list .item {
+  color: lightgrey;
+  height: 40px;
+  padding: 10px;
+}
+
+.patient-search-container .patient-dropdown .list .item .create-patient-btn h2 {
+  font-weight: bold;
+} 
+
+
+/* NEW SET styles */
 
 .new-set-add, .new-patient-add {
   height: 100px;
@@ -70,4 +125,4 @@ input[type="text"] {
 /*.list {
   border: 1px solid red;
   margin-top: 40%;
-}*/
+}

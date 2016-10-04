@@ -13,17 +13,30 @@
       </div>
     </div>
 
-    <!-- List of Patients -->
-    <ion-list ng-show="inputSelected && !isPatientChosen" class="animate-hide">
-      <!-- search bar -->
-      <ion-item>
+    <!-- search bar -->
+    <div class="patient-search-container">
 
-      
-      </ion-item>
-      <ion-item class="item-remove-animate" ng-repeat="patient in patients" type="item-text-wrap" ng-click="fillInPatientName(patient.id, patient.full_name)" aria-label="Toggle ngHide">
-        <h2>{{patient.full_name}}</h2>
-      </ion-item>
-    </ion-list>
+      <!-- List of Patients -->
+      <ion-list ng-show="inputSelected && !isPatientChosen" class="animate-hide patient-dropdown">
+<!--         <button ng-if="search.length"
+                class="button button-icon ion-android-close input-button"
+                ng-click="clearSearch()">
+        </button> -->
+        <input ng-show="inputSelected && !isPatientChosen"
+               type="search"
+               class="patient-search-input"
+               placeholder="Filter contacts..."
+               ng-model="searchText.full_name"
+               ng-change="printModel()">
+        <ion-item class="item-remove-animate" ng-repeat="patient in patients | filter:searchText" type="item-text-wrap" ng-click="fillInPatientName(patient.id, patient.full_name)" aria-label="Toggle ngHide">
+          <h2>{{patient.full_name}}</h2>
+        </ion-item>
+        <ion-item class="create-patient-btn" on-click="fillInPatientName(0, searchText.full_name)">
+          <h2>+ Create Patient</h2>
+        </ion-item>
+      </ion-list>
+    </div>
+
 
     <!-- List of Sets Associated With Chosen Patient -->
     <ion-list ng-show="inputSelected && isPatientChosen && !isSetChosen" class="animate-hide">   

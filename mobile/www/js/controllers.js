@@ -173,6 +173,12 @@ angular.module('safeSnap.controllers', [])
  $scope.submit = function() {
   $state.go("tab.take-photo", {patientId: $scope.patientId, setId: $scope.setId });
  }
+
+ // SEARCH
+
+ $scope.printModel = function() {
+   console.log(this.searchText)
+ }
 })
 
 .controller('TakePhotoCtrl', function($http, $scope, $cordovaCamera, $state, $stateParams, Patients, api) {

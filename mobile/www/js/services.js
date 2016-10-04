@@ -13,14 +13,14 @@ angular.module('safeSnap.services', [])
       if ( this.isTestMode() ) {
         return "http://localhost:3000/"
       } else {
-        return "http://safesnap.herokuapp.com/"
+        return "http://safesnapapi.herokuapp.com/"
       }
     },
     // isLocalhost: function() {
     //   return ionic.Platform.platform() === "macintel" && !this.isHttps();
     // },
     isTestMode: function() {
-      return true;
+      return false;
     },
     // isHttps: function() {
     //   return window.location.origin.split(':')[0] == "https";
