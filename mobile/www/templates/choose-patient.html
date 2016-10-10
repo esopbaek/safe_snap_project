@@ -1,11 +1,11 @@
 <ion-view view-title="Take Photo">
-  <ion-content class="padding">
+  <ion-content class="padding pageBody" ng-click="closeModals(nil, $event)">
     <div class="list choose-set">
-      <div id="patient-name-input" ng-click="toggleInputSelected()">
+      <div id="patient-name-input" ng-click="toggleNameFieldSelected()" class="keep-modal">
         Patient Name
       </div>
       </br>
-      <div id="set-name-input" ng-click="uncheckSet()">
+      <div id="set-name-input" ng-click="toggleIncidentFieldSelected()" class="keep-modal">
         Incident
       </div>
       <div ng-click="submit()" class="choose-set-to-add-image">
@@ -14,35 +14,34 @@
     </div>
 
     <!-- search bar -->
-    <div class="patient-search-container">
+    <div class="patient-search-container keep-modal">
 
       <!-- List of Patients -->
-      <ion-list ng-show="inputSelected && !isPatientChosen" class="animate-hide patient-dropdown">
+      <ion-list ng-show="nameFieldSelected" class="animate-hide patient-dropdown">
 <!--         <button ng-if="search.length"
                 class="button button-icon ion-android-close input-button"
                 ng-click="clearSearch()">
         </button> -->
-        <input ng-show="inputSelected && !isPatientChosen"
+        <input ng-show="nameFieldSelected"
                type="search"
-               class="patient-search-input"
+               class="patient-search-input keep-modal"
                placeholder="Filter contacts..."
-               ng-model="searchText.full_name"
-               ng-change="printModel()">
-        <ion-item class="item-remove-animate" ng-repeat="patient in patients | filter:searchText" type="item-text-wrap" ng-click="fillInPatientName(patient.id, patient.full_name)" aria-label="Toggle ngHide">
-          <h2>{{patient.full_name}}</h2>
+               ng-model="searchText.full_name">
+        <ion-item class="item-remove-animate keep-modal" ng-repeat="patient in patients | filter:searchText" type="item-text-wrap" ng-click="choosePatient(patient.id, patient.full_name)" aria-label="Toggle ngHide">
+          <h2 class="keep-modal">{{patient.full_name}}</h2>
         </ion-item>
 
       </ion-list>
     </div>
 
-    <div class="set-search-container">
+    <div class="set-search-container keep-modal">
       <!-- List of Sets Associated With Chosen Patient -->
-      <ion-list ng-show="inputSelected && isPatientChosen && !isSetChosen" class="animate-hide">   
+      <ion-list ng-show="incidentFieldSelected && isPatientChosen && !isSetChosen" class="animate-hide keep-modal">   
         <ion-item class="item-remove-animate" ng-repeat="set in sets" type="item-text-wrap" ng-click="chooseSet(set.id, set.name)">
-          <h2>{{set.name}}</h2>
+          <h2 class="keep-modal">{{set.name}}</h2>
         </ion-item>
-        <ion-item href="#/tab/patients/{{ patient.id }}/set/new">
-          + CREATE A SET
+        <ion-item href="#/tab/patients/{{ patient.id }}/set/new" class="keep-modal">
+          + CREATE
         </ion-item>
       </ion-list>
     </div>

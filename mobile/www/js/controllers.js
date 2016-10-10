@@ -15,12 +15,12 @@ angular.module('safeSnap.controllers', [])
 })
 
 .controller('LoginCtrl', function($scope, $location, UserSession, $ionicPopup, $rootScope, $ionicHistory) {
-  $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) { 
-    // do something
-    $ionicHistory.clearHistory();
-    // if (toState.name === 'myBaseStateName') {
-    // }
-  })
+  // $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) { 
+  //   // do something
+  //   $ionicHistory.clearHistory();
+  //   // if (toState.name === 'myBaseStateName') {
+  //   // }
+  // })
 
   $scope.data = {};
   $scope.login = function() {
@@ -128,24 +128,57 @@ angular.module('safeSnap.controllers', [])
 
 .controller('ChoosePatientCtrl', function($http, $scope, $state, $ionicPopup, $stateParams, Patients, api, $rootScope) {
  $scope.isPatientChosen = false;
- 
+
  $scope.patients = [];
  $http.get(api.url("api/physicians/1/patients"))
   .success(function(data) {
     $scope.patients = data;
   })
 
- $scope.toggleInputSelected = function() {
-  $scope.inputSelected = true;
-  if ($scope.isPatientChosen) {
-    $scope.uncheckName();
-  }
+ $scope.toggleNameFieldSelected = function() {
+  $scope.nameFieldSelected = true;
+  // if () {
+
+  // }
+  //$scope.isPatientChosen = false;
+  $scope.resetSetField();
+
+  // if ($scope.isPatientChosen) {
+  //   $scope.resetNameField();
+  // }
  }
 
- $scope.fillInPatientName = function(patientId, patientName) {
+ $scope.resetNameField = function() {
+  nameInput = document.getElementById('patient-name-input');
+  nameInput.innerText = "";
+  $scope.patientId = null;
+  // $scope.resetSetField();
+ }
+
+$scope.toggleIncidentFieldSelected = function() {
+  $scope.incidentFieldSelected = true;
+  $scope.isSetChosen = false;
+  if ($scope.isSetChosen) {
+    $scope.resetSetField();
+  }
+  
+ }
+
+ $scope.resetSetField = function() {
+  setInput = document.getElementById('set-name-input');
+  setInput.innerText = "Incident"
+  $scope.setId = null;
+ }
+
+ $scope.choosePatient = function(patientId, patientName) {
   $scope.patientId = patientId;
   $scope.isPatientChosen = true;
+  $scope.nameFieldSelected = false;
   document.getElementById('patient-name-input').innerText = patientName;
+
+  $scope.incidentFieldSelected = true;
+  $scope.isSetChosen = false;
+  // this.resetSetField();
 
   // Grab set for chosen patient
  $scope.patient = [];
@@ -169,22 +202,8 @@ angular.module('safeSnap.controllers', [])
   // go to choose photo page for corresponding patient + set
  }
 
- $scope.uncheckSet = function() {
-  setInput = document.getElementById('set-name-input');
-  setInput.innerText = ""
-  $scope.isSetChosen = false;
- }
-
- $scope.uncheckName = function() {
-  nameInput = document.getElementById('patient-name-input');
-  nameInput.innerText = "";
-  $scope.patientId = null;
-  $scope.isPatientChosen = false;
-  $scope.uncheckSet();
- }
 
  $scope.submit = function() {
-  console.log($scope.patientId, $scope.setId)
   if ($scope.patientId && $scope.setId) {
     $state.go("tab.take-photo", {patientId: $scope.patientId, setId: $scope.setId });
   } else if (!$scope.patientId) { // if no patient selected
@@ -198,11 +217,19 @@ angular.module('safeSnap.controllers', [])
   }
  }
 
- // SEARCH
-
- $scope.printModel = function() {
-   console.log(this.searchText)
+ $scope.closeModals = function(obj, $event) {
+  var $target = $($event.target);
+  if (!$target.hasClass('keep-modal')) {
+    $scope.nameFieldSelected = false;
+    $scope.incidentFieldSelected = false;
+    // $scope.isSetChosen = false;
+  }
  }
+ // var pageBody = document.getElementsByClassName("ionic-scroll");
+ // var wrappedResult = angular.element(pageBody);
+ // wrappedResult.click(function(e) {
+ //  console.log(clicked);
+ // })
 })
 
 .controller('TakePhotoCtrl', function($http, $scope, $cordovaCamera, $state, $stateParams, Patients, api) {
