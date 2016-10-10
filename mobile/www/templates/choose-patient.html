@@ -31,19 +31,21 @@
         <ion-item class="item-remove-animate" ng-repeat="patient in patients | filter:searchText" type="item-text-wrap" ng-click="fillInPatientName(patient.id, patient.full_name)" aria-label="Toggle ngHide">
           <h2>{{patient.full_name}}</h2>
         </ion-item>
-        <ion-item class="create-patient-btn" on-click="fillInPatientName(0, searchText.full_name)">
-          <h2>+ Create Patient</h2>
-        </ion-item>
+
       </ion-list>
     </div>
 
-
-    <!-- List of Sets Associated With Chosen Patient -->
-    <ion-list ng-show="inputSelected && isPatientChosen && !isSetChosen" class="animate-hide">   
-      <ion-item class="item-remove-animate" ng-repeat="set in sets" type="item-text-wrap" ng-click="chooseSet(set.id, set.name)">
-        <h2>{{set.name}}</h2>
-      </ion-item>
-    </ion-list>
+    <div class="set-search-container">
+      <!-- List of Sets Associated With Chosen Patient -->
+      <ion-list ng-show="inputSelected && isPatientChosen && !isSetChosen" class="animate-hide">   
+        <ion-item class="item-remove-animate" ng-repeat="set in sets" type="item-text-wrap" ng-click="chooseSet(set.id, set.name)">
+          <h2>{{set.name}}</h2>
+        </ion-item>
+        <ion-item href="#/tab/patients/{{ patient.id }}/set/new">
+          + CREATE A SET
+        </ion-item>
+      </ion-list>
+    </div>
   </ion-content>
 </ion-view>
 

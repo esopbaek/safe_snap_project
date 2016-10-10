@@ -10,9 +10,19 @@ angular.module('safeSnap.controllers', [])
 
 })
 
-.controller('LoginCtrl', function($scope, $location, UserSession, $ionicPopup, $rootScope) {
-  $scope.data = {};
+.controller("indexController", function($scope, $rootScope) {
 
+})
+
+.controller('LoginCtrl', function($scope, $location, UserSession, $ionicPopup, $rootScope, $ionicHistory) {
+  $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) { 
+    // do something
+    $ionicHistory.clearHistory();
+    // if (toState.name === 'myBaseStateName') {
+    // }
+  })
+
+  $scope.data = {};
   $scope.login = function() {
     var user_session = new UserSession({ user: $scope.data });
     user_session.$save(
@@ -116,8 +126,9 @@ angular.module('safeSnap.controllers', [])
     })
 })
 
-.controller('ChoosePatientCtrl', function($http, $scope, $state, $stateParams, Patients, api) {
+.controller('ChoosePatientCtrl', function($http, $scope, $state, $ionicPopup, $stateParams, Patients, api, $rootScope) {
  $scope.isPatientChosen = false;
+ 
  $scope.patients = [];
  $http.get(api.url("api/physicians/1/patients"))
   .success(function(data) {
@@ -139,8 +150,10 @@ angular.module('safeSnap.controllers', [])
   // Grab set for chosen patient
  $scope.patient = [];
  $scope.sets = []
+
+ // check if patientId is valid in the database, and then if not, create new patient.
+
   var getUrl = api.url("api/physicians/1/patients/" + patientId);
-  console.log(getUrl);
   $http.get(getUrl)
     .success(function(data) {
       $scope.patient = data;
@@ -171,7 +184,18 @@ angular.module('safeSnap.controllers', [])
  }
 
  $scope.submit = function() {
-  $state.go("tab.take-photo", {patientId: $scope.patientId, setId: $scope.setId });
+  console.log($scope.patientId, $scope.setId)
+  if ($scope.patientId && $scope.setId) {
+    $state.go("tab.take-photo", {patientId: $scope.patientId, setId: $scope.setId });
+  } else if (!$scope.patientId) { // if no patient selected
+    $ionicPopup.alert({
+      title: 'Please choose a patient'
+    });
+  } else { // if no set
+    $ionicPopup.alert({
+      title: 'Please choose a set'
+    });
+  }
  }
 
  // SEARCH
@@ -356,7 +380,6 @@ angular.module('safeSnap.controllers', [])
       $scope.sets = $scope.patient.image_sets
 
       $scope.remove = function(set, index) {
-        console.log(set);
         var patientId = $stateParams.patientId;
         var setId = set.id;
         var deleteUrl = api.url("api/physicians/1/patients/" + patientId + "/image_sets/" + setId);
@@ -397,7 +420,6 @@ angular.module('safeSnap.controllers', [])
 
   $scope.patient = [];
   var getUrl = api.url("api/physicians/1/patients/" + $stateParams.patientId);
-  console.log(getUrl);
   $http.get(getUrl)
     .success(function(data) {
       $scope.patient = data;
@@ -405,7 +427,6 @@ angular.module('safeSnap.controllers', [])
 
   var scope = $scope;
   $scope.submit = function() {
-    console.log($stateParams.patientId)
     var data = {
       name: this.name,
       description: this.description,
@@ -419,7 +440,7 @@ angular.module('safeSnap.controllers', [])
     url: url
       }).then(function successCallback(response) {
         scope.patient.image_sets.push(response.data);
-        $state.go('tab.set-list', {patientId: $scope.patient.id}, {reload: true});
+        $state.go('tab.patient-detail', {patientId: $scope.patient.id, setId: response.data.id}, {reload: true});
         // this callback will be called asynchronously
         // when the response is available
       }, function errorCallback(response) {

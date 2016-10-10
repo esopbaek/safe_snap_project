@@ -111,6 +111,7 @@ angular.module('safeSnap', ['ionic', 'ngCordova', 'ngResource', 'safeSnap.contro
   })
 
   .state('tab.choose-patient', {
+    cache: false,
     url: '/camera/choose-patient',
     views: {
       'tab-camera': {
