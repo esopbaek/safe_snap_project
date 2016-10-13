@@ -4,6 +4,11 @@ angular.module('safeSnap.services', [])
   return $resource(api.url("users/sign_in.json"));
 })
 
+.factory('UserRegistration', function($resource, api) {
+  return $resource(api.url("users.json"));
+})
+
+
 .factory('api', function() {
   return {
     url: function(path) {
@@ -20,7 +25,7 @@ angular.module('safeSnap.services', [])
     //   return ionic.Platform.platform() === "macintel" && !this.isHttps();
     // },
     isTestMode: function() {
-      return false;
+      return true;
     },
     // isHttps: function() {
     //   return window.location.origin.split(':')[0] == "https";

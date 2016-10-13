@@ -3,11 +3,25 @@ angular.module('safeSnap.controllers', [])
 .controller('DashCtrl', function($scope) {})
 
 
-.controller('RegistrationCtrl', function($http, $scope) {
-   $scope.submit = function() {
-
-   }
-
+.controller('RegistrationCtrl', function($scope, $location, UserRegistration, $ionicPopup, $rootScope, $ionicHistory) {
+  $scope.data = {};
+  $scope.register = function() {
+    var user_registration = new UserRegistration({ user: $scope.data });
+    user_registration.$save(
+      function(data){
+        window.localStorage['userId'] = data.id;
+        window.localStorage['userName'] = data.name;
+        $location.path('/tab/patients');
+      },
+      function(err){
+        var error = err["data"]["error"] || err.data.join('. ')
+        var confirmPopup = $ionicPopup.alert({
+          title: 'An error occured',
+          template: error
+        });
+      }
+    );
+  }
 })
 
 .controller("indexController", function($scope, $rootScope) {
@@ -51,24 +65,16 @@ angular.module('safeSnap.controllers', [])
   //$scope.$on('$ionicView.enter', function(e) {
   //});
   $scope.patients = [];
+
+  $scope.$on('$ionicView.beforeEnter', function() {
+    $http.get(api.url("api/physicians/1/patients"))
+      .success(function(data) {
+        $scope.patients = data;
+      })
+  });
   
   var imageURI = './img/profile_photos/adam.png';
 
-  var policyJSON = {
-      "expiration": "2020-12-31T12:00:00.000Z",
-      "conditions": [
-          {"bucket": "safesnap"},
-          ["starts-with", "$key", "uploads/"],
-          {"acl": 'public-read'},
-          ["starts-with", "$Content-Type", ""],
-          ["content-length-range", 0, 524288000]
-      ]
-  };
-
-  $http.get(api.url("api/physicians/1/patients"))
-    .success(function(data) {
-      $scope.patients = data;
-    })
 
   var scope = $scope;
   $scope.remove = function(index, patient) {
@@ -92,7 +98,30 @@ angular.module('safeSnap.controllers', [])
   };
 })
 
-.controller('PatientDetailCtrl', function($http, $scope, $stateParams, api) {
+.controller('PatientDetailCtrl', function($http, $scope, $stateParams, api, $cordovaCamera, $state) {
+  $scope.addNewImageToSet = function(patientId, setId) {
+    var options = {
+        quality: 80,
+        destinationType: Camera.DestinationType.DATA_URL,
+        sourceType: Camera.PictureSourceType.CAMERA,
+        allowEdit: true,
+        encodingType: Camera.EncodingType.JPEG,
+        targetWidth: 250,
+        targetHeight: 250,
+        popoverOptions: CameraPopoverOptions,
+        saveToPhotoAlbum: false
+    };
+     
+    $cordovaCamera.getPicture(options).then(function(imageData) {
+        $scope.pictureUrl = "data:image/jpeg;base64," + imageData;
+        $state.go("tab.submit-new-image", {patientId: $stateParams.patientId, setId: $stateParams.setId, pictureUrl: $scope.pictureUrl });
+    }, function(err) {
+      alert("ERROR");
+      console.log(err);
+        // error
+    });
+  };
+
   $http.get(api.url("api/physicians/1/patients"))
     .success(function(data) { 
       $scope.patients = data;
@@ -126,7 +155,14 @@ angular.module('safeSnap.controllers', [])
     })
 })
 
-.controller('ChoosePatientCtrl', function($http, $scope, $state, $ionicPopup, $stateParams, Patients, api, $rootScope) {
+.controller('ChoosePatientCtrl', function($http, $scope, $state, $ionicPopup, $stateParams, Patients, api, $rootScope, $cordovaCamera) {
+ // $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) { 
+ //    // do something
+ //    $ionicHistory.clearHistory();
+ //    if (toState.name === 'myBaseStateName') {
+
+ //    }
+ // })
  $scope.isPatientChosen = false;
 
  $scope.patients = [];
@@ -205,7 +241,33 @@ $scope.toggleIncidentFieldSelected = function() {
 
  $scope.submit = function() {
   if ($scope.patientId && $scope.setId) {
-    $state.go("tab.take-photo", {patientId: $scope.patientId, setId: $scope.setId });
+    // $state.go("tab.take-photo", {patientId: $scope.patientId, setId: $scope.setId });
+    // var getUrl = api.url("api/physicians/1/patients/" + $scope.patientId + "/image_sets/" + $scope.setId);
+    // $http.get(getUrl)
+    // .success(function(data) {
+    //   $scope.set = data;
+    // });
+  
+    var options = {
+        quality: 80,
+        destinationType: Camera.DestinationType.DATA_URL,
+        sourceType: Camera.PictureSourceType.CAMERA,
+        allowEdit: true,
+        encodingType: Camera.EncodingType.JPEG,
+        targetWidth: 250,
+        targetHeight: 250,
+        popoverOptions: CameraPopoverOptions,
+        saveToPhotoAlbum: false
+    };
+     
+    $cordovaCamera.getPicture(options).then(function(imageData) {
+        $scope.pictureUrl = "data:image/jpeg;base64," + imageData;
+        // s3Uploader.upload($scope.pictureUrl, "text.txt");
+
+        $state.go("tab.submit-new-image", {patientId: $scope.patientId, setId: $scope.setId, pictureUrl: $scope.pictureUrl });
+    }, function(err) {
+        // error
+    });
   } else if (!$scope.patientId) { // if no patient selected
     $ionicPopup.alert({
       title: 'Please choose a patient'
@@ -239,7 +301,6 @@ $scope.toggleIncidentFieldSelected = function() {
   .success(function(data) {
     $scope.set = data;
   });
-  $scope.pictureUrl = 'http://placehold.it/300x300'
   
   $scope.takePicture = function() {
     var options = {
@@ -255,62 +316,6 @@ $scope.toggleIncidentFieldSelected = function() {
     };
      
     $cordovaCamera.getPicture(options).then(function(imageData) {
-
-        var policyJSON = {
-            "expiration": "2020-12-31T12:00:00.000Z",
-            "conditions": [
-                {"bucket": "safesnap"},
-                ["starts-with", "$key", "uploads/"],
-                {"acl": 'public-read'},
-                ["starts-with", "$Content-Type", ""],
-                ["content-length-range", 0, 524288000]
-            ]
-        };
-
-        // var s3Uploader = (function () {
-        //     var encodedSig = "TXRhWMe+P7OrC1uVSsp3/DmOpro=";
-        //     var encodedPolicy = "eyJleHBpcmF0aW9uIj0+IjIwMjAtMTItMzFUMTI6MDA6MDAuMDAwWiIsICJjb25kaXRpb25zIj0+W3siYnVja2V0Ij0+InNhZmVzbmFwIn0sIFsic3RhcnRzLXdpdGgiLCAiJGtleSIsICJ1cGxvYWRzLyJdLCB7ImFjbCI9PiJwdWJsaWMtcmVhZCJ9LCBbInN0YXJ0cy13aXRoIiwgIiRDb250ZW50LVR5cGUiLCAiIl0sIFsiY29udGVudC1sZW5ndGgtcmFuZ2UiLCAwLCA1MjQyODgwMDBdXX0=";
-         
-        //     var s3URI = encodeURI("https://safesnap.s3.amazonaws.com/"),
-        //         policyBase64 = encodedPolicy,
-        //         signature = encodedSig,
-        //         awsKey = 'AKIAIWNSTQDM3EP5KTZQ',
-        //         acl = "public-read";
-         
-        //     function upload(imageURI, fileName) {
-        //         var deferred = $.Deferred(),
-        //             ft = new FileTransfer(),
-        //             options = new FileUploadOptions();
-         
-        //         options.fileKey = "file";
-        //         options.fileName = fileName;
-        //         options.mimeType = "image/jpeg";
-        //         options.chunkedMode = false;
-        //         options.params = {
-        //             "key": fileName,
-        //             "AWSAccessKeyId": awsKey,
-        //             "acl": acl,
-        //             "policy": policyBase64,
-        //             "signature": signature,
-        //             "Content-Type": "image/jpeg"
-        //         };
-         
-        //         ft.upload(imageURI, s3URI,
-        //             function (e) {
-        //                 deferred.resolve(e);
-        //             },
-        //             function (e) {
-        //                 deferred.reject(e);
-        //             }, options);
-         
-        //         return deferred.promise();
-         
-        //     }
-         
-        //     return {
-        //         upload: upload
-        //     }
-        // }());
         $scope.pictureUrl = "data:image/jpeg;base64," + imageData;
         // s3Uploader.upload($scope.pictureUrl, "text.txt");
 
@@ -320,9 +325,6 @@ $scope.toggleIncidentFieldSelected = function() {
         // error
     });
   }
-  // $scope.test = function() {
-  //   $state.go("tab.submit-new-image", {patientId: $stateParams.patientId, pictureUrl: $scope.pictureUrl });
-  // }
 })
 
 .controller('NewImageCtrl', function($http, $scope, $state, $stateParams, Patients, api) {
@@ -374,59 +376,62 @@ $scope.toggleIncidentFieldSelected = function() {
 
 .controller('SetListCtrl', function($http, $scope, $state, $stateParams, Patients, api) {
 
-
-  $http.get(api.url("api/physicians/1/patients"))
-    .success(function(data) {
-      $scope.patients = data;
-      var getPatientById = function(patients, patientId) {
-        for (var i = 0; i < patients.length; i++) {
-          if (patients[i].id === parseInt(patientId)) {
-            return patients[i];
+  $scope.$on('$ionicView.beforeEnter', function() {
+    $http.get(api.url("api/physicians/1/patients"))
+      .success(function(data) {
+        $scope.patients = data;
+        var getPatientById = function(patients, patientId) {
+          for (var i = 0; i < patients.length; i++) {
+            if (patients[i].id === parseInt(patientId)) {
+              return patients[i];
+            }
           }
-        }
-        return null;
-      };
+          return null;
+        };
 
-      var getSet = function(patientId, setId) {
-        for (var i = 0; i < patients.length; i++) {
-          if (patients[i].id === parseInt(patientId)) {
-            var patient = patients[i];
+        var getSet = function(patientId, setId) {
+          for (var i = 0; i < patients.length; i++) {
+            if (patients[i].id === parseInt(patientId)) {
+              var patient = patients[i];
+            }
           }
-        }
-        for (var i = 0; i < patient.image_sets.length; i++) {
-          if (patient.image_sets[i].id === parseInt(setId)) {
-            return patient.image_sets[i];
+          for (var i = 0; i < patient.image_sets.length; i++) {
+            if (patient.image_sets[i].id === parseInt(setId)) {
+              return patient.image_sets[i];
+            }
           }
-        }
 
-        return null;
-      };
+          return null;
+        };
 
-      $scope.patient = getPatientById($scope.patients, $stateParams.patientId);
-      // $scope.patient = Patients.get($stateParams.patientId);
-      $scope.sets = $scope.patient.image_sets
+        $scope.patient = getPatientById($scope.patients, $stateParams.patientId);
+        // $scope.patient = Patients.get($stateParams.patientId);
+        $scope.sets = $scope.patient.image_sets
 
-      $scope.remove = function(set, index) {
-        var patientId = $stateParams.patientId;
-        var setId = set.id;
-        var deleteUrl = api.url("api/physicians/1/patients/" + patientId + "/image_sets/" + setId);
-        $http({
-        method: 'DELETE',
-        data: { patient_id: patientId, id: set.id },
-        url: deleteUrl,
-          }).then(function successCallback(response) {
-            // BUG make sure jsons match up perfectly for correct delete UI
-            $scope.sets.splice(index, 1);
-            // $state.go('tab.patients', {}, { reload: true });
-            // this callback will be called asynchronously
-            // when the response is available
-          }, function errorCallback(response) {
-            alert("error while deleting image set");
-              // called asynchronously if an error occurs
-              // or server returns response with an error status.
-        });
-      };
+        $scope.remove = function(set, index) {
+          var patientId = $stateParams.patientId;
+          var setId = set.id;
+          var deleteUrl = api.url("api/physicians/1/patients/" + patientId + "/image_sets/" + setId);
+          $http({
+          method: 'DELETE',
+          data: { patient_id: patientId, id: set.id },
+          url: deleteUrl,
+            }).then(function successCallback(response) {
+              // BUG make sure jsons match up perfectly for correct delete UI
+              $scope.sets.splice(index, 1);
+              // $state.go('tab.patients', {}, { reload: true });
+              // this callback will be called asynchronously
+              // when the response is available
+            }, function errorCallback(response) {
+              alert("error while deleting image set");
+                // called asynchronously if an error occurs
+                // or server returns response with an error status.
+          });
+        };
     })
+
+  });
+
 })
 
 .controller('NewSetCtrl', function($http, $scope, $state, $stateParams, api) {

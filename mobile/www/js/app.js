@@ -38,6 +38,14 @@ angular.module('safeSnap', ['ionic', 'ngCordova', 'ngResource', 'safeSnap.contro
     controller: 'LoginCtrl'
   })
 
+  // Register Account
+
+  .state('register', {
+    url: '/register',
+    templateUrl: 'templates/registration.html',
+    controller: 'RegistrationCtrl'
+  })
+
   // setup an abstract state for the tabs directive
   .state('tab', {
     url: '/tab',
@@ -68,7 +76,6 @@ angular.module('safeSnap', ['ionic', 'ngCordova', 'ngResource', 'safeSnap.contro
   })
 
   .state('tab.set-list', {
-    cache: false,
     url: '/patients/:patientId/set-index',
     views: {
       'tab-patients': {
@@ -143,25 +150,11 @@ angular.module('safeSnap', ['ionic', 'ngCordova', 'ngResource', 'safeSnap.contro
   })
 
   .state('tab.patients', {
-    cache: false,
     url: '/patients',
     views: {
       'tab-patients': {
         templateUrl: 'templates/tab-patients.html',
         controller: 'PatientsCtrl'
-      }
-    }
-  })
-
-  // Register Account
-
-  .state('tab.register', {
-    cache: false,
-    url: '/sign-up',
-    views: {
-      'tab-register': {
-        templateUrl: 'templates/tab-sign-up.html',
-        controller: 'RegistrationCtrl'
       }
     }
   })

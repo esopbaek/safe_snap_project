@@ -8,7 +8,7 @@
   <ion-content class="padding">
     <div class='add-image-container clearfix'>
       <h2 class="image-set-name">{{set.name}}</h2>
-      <a id="add-image-to-set" class="ion-android-add-circle" href="#/tab/camera/patient/{{patient.id}}/set/{{set.id}}"></a>
+      <a id="add-image-to-set" class="ion-android-add-circle" ng-click="addNewImageToSet(patient.id, set.id)"></a>
     </div>
     <p>Last Updated: {{set.images[0].added_date}}</p>
     <p>{{set.description}}</p>
