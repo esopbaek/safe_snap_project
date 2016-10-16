@@ -25,7 +25,7 @@ angular.module('safeSnap.services', [])
     //   return ionic.Platform.platform() === "macintel" && !this.isHttps();
     // },
     isTestMode: function() {
-      return true;
+      return false;
     },
     // isHttps: function() {
     //   return window.location.origin.split(':')[0] == "https";

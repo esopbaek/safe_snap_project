@@ -46,6 +46,13 @@ angular.module('safeSnap', ['ionic', 'ngCordova', 'ngResource', 'safeSnap.contro
     controller: 'RegistrationCtrl'
   })
 
+  .state('submit-new-image', {
+    cache: false,
+    url: '/camera/choose-patient/:patientId/:setId/:pictureUrl',
+    templateUrl: 'templates/new-image-info.html',
+    controller: 'NewImageCtrl'
+  })
+
   // setup an abstract state for the tabs directive
   .state('tab', {
     url: '/tab',
@@ -105,8 +112,6 @@ angular.module('safeSnap', ['ionic', 'ngCordova', 'ngResource', 'safeSnap.contro
     }
   })
 
-  
-
   .state('tab.account', {
     url: '/account',
     views: {
@@ -124,27 +129,6 @@ angular.module('safeSnap', ['ionic', 'ngCordova', 'ngResource', 'safeSnap.contro
       'tab-camera': {
         templateUrl: 'templates/choose-patient.html',
         controller: 'ChoosePatientCtrl'
-      }
-    }
-  })
-
-  .state('tab.take-photo', {
-    url: '/camera/patient/:patientId/set/:setId',
-    views: {
-      'tab-camera': {
-        templateUrl: 'templates/take-photo.html',
-        controller: 'TakePhotoCtrl'
-      }
-    }
-  })
-
-  .state('tab.submit-new-image', {
-    cache: false,
-    url: '/camera/choose-patient/:patientId/:setId/:pictureUrl',
-    views: {
-      'tab-camera': {
-        templateUrl: 'templates/new-image-info.html',
-        controller: 'NewImageCtrl'
       }
     }
   })

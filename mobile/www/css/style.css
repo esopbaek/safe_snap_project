@@ -130,6 +130,11 @@ input[type="text"] {
   margin-top: 20px;
 }
 
+.wrapping-list .item-remove-animate p {
+  overflow: initial;
+  white-space: initial;
+}
+
 /*.list {
   border: 1px solid red;
   margin-top: 40%;

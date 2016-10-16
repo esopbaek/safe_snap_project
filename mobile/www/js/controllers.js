@@ -114,9 +114,8 @@ angular.module('safeSnap.controllers', [])
      
     $cordovaCamera.getPicture(options).then(function(imageData) {
         $scope.pictureUrl = "data:image/jpeg;base64," + imageData;
-        $state.go("tab.submit-new-image", {patientId: $stateParams.patientId, setId: $stateParams.setId, pictureUrl: $scope.pictureUrl });
+        $state.go("submit-new-image", {patientId: $stateParams.patientId, setId: $stateParams.setId, pictureUrl: $scope.pictureUrl });
     }, function(err) {
-      alert("ERROR");
       console.log(err);
         // error
     });
@@ -264,7 +263,7 @@ $scope.toggleIncidentFieldSelected = function() {
         $scope.pictureUrl = "data:image/jpeg;base64," + imageData;
         // s3Uploader.upload($scope.pictureUrl, "text.txt");
 
-        $state.go("tab.submit-new-image", {patientId: $scope.patientId, setId: $scope.setId, pictureUrl: $scope.pictureUrl });
+        $state.go("submit-new-image", {patientId: $scope.patientId, setId: $scope.setId, pictureUrl: $scope.pictureUrl });
     }, function(err) {
         // error
     });
@@ -367,7 +366,6 @@ $scope.toggleIncidentFieldSelected = function() {
         // this callback will be called asynchronously
         // when the response is available
       }, function errorCallback(response) {
-        alert("error while creating patient");
           // called asynchronously if an error occurs
           // or server returns response with an error status.
     });
@@ -434,7 +432,7 @@ $scope.toggleIncidentFieldSelected = function() {
 
 })
 
-.controller('NewSetCtrl', function($http, $scope, $state, $stateParams, api) {
+.controller('NewSetCtrl', function($http, $scope, $state, $stateParams, $ionicPopup, api) {
   var today = new Date();
   var dd = today.getDate();
   var mm = today.getMonth()+1; //January is 0!
@@ -466,20 +464,27 @@ $scope.toggleIncidentFieldSelected = function() {
     };
     var url = api.url('api/physicians/1/patients/' + $stateParams.patientId + '/image_sets');
 
-    $http({
-    method: 'POST',
-    data: data,
-    url: url
-      }).then(function successCallback(response) {
-        scope.patient.image_sets.push(response.data);
-        $state.go('tab.patient-detail', {patientId: $scope.patient.id, setId: response.data.id}, {reload: true});
-        // this callback will be called asynchronously
-        // when the response is available
-      }, function errorCallback(response) {
-        alert("error while creating image set");
-          // called asynchronously if an error occurs
-          // or server returns response with an error status.
-    });
+    if (!this.name) {
+      $ionicPopup.alert({
+        title: 'No Set Name',
+        template: "Please provide a set name"
+      });
+    } else {
+      $http({
+      method: 'POST',
+      data: data,
+      url: url
+        }).then(function successCallback(response) {
+          scope.patient.image_sets.push(response.data);
+          $state.go('tab.patient-detail', {patientId: $scope.patient.id, setId: response.data.id}, {reload: true});
+          // this callback will be called asynchronously
+          // when the response is available
+        }, function errorCallback(response) {
+          alert("error while creating image set");
+            // called asynchronously if an error occurs
+            // or server returns response with an error status.
+      });
+    }
   }
 })
 

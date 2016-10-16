@@ -12,8 +12,8 @@
     </div>
     <p>Last Updated: {{set.images[0].added_date}}</p>
     <p>{{set.description}}</p>
-    <ion-list>
-      <ion-item class="item-remove-animate" ng-repeat="image in set.images" type="item-text-wrap" style="height: 300px;">
+    <ion-list class="wrapping-list">
+      <ion-item class="item-remove-animate" ng-repeat="image in set.images" type="item-text-wrap" style="min-height: 300px;">
         <img ng-src="{{image.url}}" style="width: 100%; height: 90%">
         <p>{{image.added_date}}: {{image.desc}}</p>
       </ion-item>
